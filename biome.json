@@ -1,0 +1,154 @@
+{
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true,
+		"defaultBranch": "master"
+	},
+	"files": {
+		"ignoreUnknown": true,
+		"includes": ["**", "!!**/dist", "!!**/generated"]
+	},
+	"formatter": {
+		"enabled": true,
+		"formatWithErrors": false,
+		"indentStyle": "space",
+		"indentWidth": 2,
+		"lineEnding": "lf",
+		"lineWidth": 100,
+		"attributePosition": "auto",
+		"bracketSameLine": false,
+		"bracketSpacing": true,
+		"expand": "auto",
+		"useEditorconfig": true,
+		"includes": ["**", "!**/node_modules", "!**/dist"]
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"a11y": {
+				"noAutofocus": "off",
+				"noSvgWithoutTitle": "off",
+				"useButtonType": "error"
+			},
+			"complexity": {
+				"noExcessiveCognitiveComplexity": "off",
+				"noForEach": "error",
+				"noUselessStringConcat": "error",
+				"noUselessUndefinedInitialization": "error",
+				"noVoid": "off",
+				"useArrowFunction": "error",
+				"useDateNow": "error",
+				"useFlatMap": "error",
+				"useLiteralKeys": "error",
+				"useOptionalChain": "error",
+				"useSimplifiedLogicExpression": "error"
+			},
+			"correctness": {
+				"noUndeclaredVariables": "error",
+				"noUnusedFunctionParameters": "error",
+				"noUnusedImports": { "level": "error", "fix": "safe", "options": {} },
+				"noUnusedVariables": "error"
+			},
+			"performance": {
+				"noAccumulatingSpread": "error",
+				"noBarrelFile": "error",
+				"noDelete": "error"
+			},
+			"security": { "noGlobalEval": "error" },
+			"style": {
+				"noEnum": "error",
+				"noNegationElse": "error",
+				"noNestedTernary": "error",
+				"noNonNullAssertion": "off",
+				"noUnusedTemplateLiteral": "error",
+				"noUselessElse": "error",
+				"useBlockStatements": {
+					"level": "error",
+					"fix": "safe",
+					"options": {}
+				},
+				"useCollapsedElseIf": "error",
+				"useConsistentTypeDefinitions": {
+					"level": "error",
+					"options": { "style": "interface" }
+				},
+				"useConst": "error",
+				"useExportType": "error",
+				"useFilenamingConvention": {
+					"level": "error",
+					"options": { "requireAscii": true, "filenameCases": ["kebab-case"] }
+				},
+				"useForOf": "error",
+				"useImportType": "error",
+				"useNodejsImportProtocol": "error",
+				"useSelfClosingElements": "error",
+				"useShorthandAssign": "error",
+				"useTemplate": "error"
+			},
+			"suspicious": {
+				"noBitwiseOperators": "off",
+				"noConsole": "off",
+				"noDocumentCookie": "off",
+				"noDoubleEquals": "error",
+				"noEmptyBlockStatements": "error",
+				"noExplicitAny": "error",
+				"useAwait": "error",
+				"useStaticResponseMethods": "error"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"jsxQuoteStyle": "double",
+			"quoteProperties": "asNeeded",
+			"trailingCommas": "none",
+			"semicolons": "always",
+			"arrowParentheses": "asNeeded",
+			"bracketSameLine": false,
+			"quoteStyle": "single",
+			"attributePosition": "auto",
+			"bracketSpacing": true
+		},
+		"globals": ["Bun"]
+	},
+	"json": { "formatter": { "trailingCommas": "none" } },
+	"html": {
+		"formatter": {
+			"enabled": true,
+			"indentScriptAndStyle": false,
+			"selfCloseVoidElements": "always"
+		}
+	},
+	"overrides": [
+		{
+			"includes": ["**/*.astro"],
+			"formatter": { "enabled": false },
+			"linter": { "enabled": false }
+		},
+		{
+			"includes": ["**/*.d.ts"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"noUndeclaredVariables": "off",
+						"noUnusedVariables": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/*.jsonc", "**/tsconfig.json", "**/tsconfig.*.json"],
+			"json": {
+				"parser": { "allowComments": true, "allowTrailingCommas": true }
+			}
+		},
+		{ "includes": ["*.astro"] }
+	],
+	"assist": {
+		"enabled": null,
+		"actions": { "source": { "organizeImports": "on" } }
+	}
+}
