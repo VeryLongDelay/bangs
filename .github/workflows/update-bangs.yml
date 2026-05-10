@@ -3,7 +3,7 @@ name: Update Bang List
 on:
   # Run at 00:00 UTC on the 1st of every month
   schedule:
-    - cron: "0 0 1 * *"
+    - cron: "0 0 * * *"
 
   # Allow manual trigger from GitHub Actions UI
   workflow_dispatch:
@@ -31,7 +31,7 @@ jobs:
           node-version: "24"
 
       - name: Install dependencies
-        run: bun install --no-save
+        run: bun install --frozen-lockfile
 
       - name: Update bangs from DuckDuckGo and Kagi
         run: bun run scripts/update-bangs.js
