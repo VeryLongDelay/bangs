@@ -1,23 +1,5 @@
 #!/usr/bin/env node
 
-/**
- * Bang List Update Script
- *
- * Fetches bangs from DuckDuckGo and Kagi, merges them intelligently,
- * deduplicates by combining triggers, and outputs optimized JSON.
- *
- * Usage: node scripts/update-bangs.js
- *
- * This will:
- * 1. Fetch bangs from DuckDuckGo (bang.js)
- * 2. Fetch bangs from Kagi (GitHub)
- * 3. Normalize all bangs to a common format
- * 4. Merge duplicates (same URL pattern) into single entries with multiple triggers
- * 5. Convert {{{s}}} to %s for cleaner URLs
- * 6. Sort by relevance score
- * 7. Output to data/bangs.json and data/bangs.json.sha256
- */
-
 import crypto from "node:crypto";
 import fs from "node:fs";
 import http from "node:http";
