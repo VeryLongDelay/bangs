@@ -15,6 +15,7 @@ const KAGI_BANG_URL = "https://raw.githubusercontent.com/kagisearch/bangs/main/d
 
 const DATA_DIR = path.join(__dirname, "..", "public");
 const OUTPUT_FILE = path.join(DATA_DIR, "bangs.json");
+const OUTPUT_MIN_JS_FILE = path.join(DATA_DIR, "bangs.min.js");
 const OUTPUT_SHA256_FILE = path.join(DATA_DIR, "bangs.json.sha256");
 
 function fetchJson(url) {
@@ -235,6 +236,10 @@ function toCompactFormat(bangs) {
   };
 }
 
+function toMinifiedJs(data) {
+  return `globalThis.BANGS_DATA=${JSON.stringify(data)};\n`;
+}
+
 function generateStats(bangs) {
   const stats = {
     total: bangs.length,
@@ -321,7 +326,7 @@ async function main() {
   }
 
   // Write output
-  console.log(`\n💾 Writing to ${OUTPUT_FILE}...`);
+  console.log("\n💾 Writing generated files...");
 
   // Ensure directory exists
   if (!fs.existsSync(DATA_DIR)) {
@@ -331,11 +336,16 @@ async function main() {
   // Convert to compact format for smaller file size
   const compactData = toCompactFormat(cleanedBangs);
   fs.writeFileSync(OUTPUT_FILE, JSON.stringify(compactData));
+  fs.writeFileSync(OUTPUT_MIN_JS_FILE, toMinifiedJs(compactData));
 
   const fileSize = fs.statSync(OUTPUT_FILE).size;
+  const minJsFileSize = fs.statSync(OUTPUT_MIN_JS_FILE).size;
   const originalSize = JSON.stringify(cleanedBangs).length;
   const savings = ((1 - fileSize / originalSize) * 100).toFixed(0);
-  console.log(`   File size: ${(fileSize / 1024 / 1024).toFixed(2)} MB (${savings}% smaller than object format)`);
+  console.log(`   JSON size: ${(fileSize / 1024 / 1024).toFixed(2)} MB (${savings}% smaller than object format)`);
+  console.log(`   Min JS size: ${(minJsFileSize / 1024 / 1024).toFixed(2)} MB`);
+  console.log(`   JSON output: ${OUTPUT_FILE}`);
+  console.log(`   Min JS output: ${OUTPUT_MIN_JS_FILE}`);
 
   const repoRoot = path.join(__dirname, "..");
   const sha256Rel = path.relative(repoRoot, OUTPUT_FILE).split(path.sep).join("/");

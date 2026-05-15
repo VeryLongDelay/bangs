@@ -5,7 +5,7 @@ import { extname, join, normalize, resolve } from 'node:path';
 
 const host = process.env.HOST || '127.0.0.1';
 const port = Number.parseInt(process.env.PORT || '3000', 10);
-const rootDir = resolve(process.cwd());
+const rootDir = resolve(process.cwd(), 'public');
 
 const mimeTypes = {
   '.css': 'text/css; charset=utf-8',
@@ -89,5 +89,5 @@ const server = createServer(async (request, response) => {
 });
 
 server.listen(port, host, () => {
-  console.log(`Static site available at http://${host}:${port}`);
+  console.log(`Static site available at http://${host}:${port} from ${rootDir}`);
 });

@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Search bangs from a local static dataset." />
+    <title>Bang Search</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+    :root {
+      color-scheme: light;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-alt: #eff6ff;
+      --text: #020617;
+      --muted: #475569;
+      --border: #cbd5e1;
+      --border-strong: #94a3b8;
+      --primary: #0f172a;
+      --secondary: #1e3a8a;
+      --accent: #dbeafe;
+      --shadow: 0 18px 60px rgba(15, 23, 42, 0.08);
+      --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: "Source Sans 3", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(30, 58, 138, 0.08), transparent 36%),
+        linear-gradient(180deg, #f8fafc 0%, #eef4ff 100%);
+      color: var(--text);
+    }
+
+    main {
+      width: min(100%, 760px);
+      padding: clamp(24px, 5vw, 40px);
+      border: 1px solid rgba(148, 163, 184, 0.32);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    h1 {
+      margin: 0 0 20px;
+      font-family: "Lexend", system-ui, sans-serif;
+      font-size: clamp(2rem, 6vw, 4rem);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+      color: var(--primary);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    input {
+      width: 100%;
+      padding: 18px 20px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      font: inherit;
+      font-size: 1.05rem;
+      color: var(--text);
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
+      transition:
+        border-color 180ms ease,
+        box-shadow 180ms ease,
+        background-color 180ms ease;
+    }
+
+    input::placeholder {
+      color: #64748b;
+    }
+
+    input:hover {
+      border-color: var(--border-strong);
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--secondary);
+      box-shadow:
+        0 0 0 4px rgba(30, 58, 138, 0.12),
+        var(--shadow-soft);
+    }
+
+    .results {
+      margin: 18px 0 0;
+      display: grid;
+      gap: 12px;
+    }
+
+    .result {
+      padding: 18px 20px;
+      border: 1px solid rgba(148, 163, 184, 0.26);
+      border-radius: 20px;
+      background: linear-gradient(180deg, var(--surface) 0%, var(--surface-alt) 100%);
+    }
+
+    .alias {
+      margin: 0 0 4px;
+      font-family: "Lexend", system-ui, sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--secondary);
+    }
+
+    .name {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .meta {
+      margin: 6px 0 0;
+      font-size: 0.98rem;
+      color: var(--muted);
+    }
+
+    .empty {
+      padding: 24px 20px;
+      border: 1px dashed rgba(148, 163, 184, 0.6);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.68);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 14px;
+      }
+
+      main {
+        padding: 20px;
+        border-radius: 22px;
+      }
+
+      input {
+        padding: 16px 18px;
+      }
+    }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Bang Search</h1>
+      <label class="sr-only" for="bang-search">Search bangs</label>
+      <input
+        id="bang-search"
+        type="search"
+        placeholder="Search !g, Wikipedia, shopping, maps..."
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <section class="results" id="results" aria-live="polite"></section>
+    </main>
+
+    <script>
+    const searchInput = document.querySelector('#bang-search');
+    const results = document.querySelector('#results');
+    let allBangs = [];
+    let categories = [];
+
+    function normalizeBang([aliases, name, categoryIndex, popularity, template]) {
+      const aliasList = Array.isArray(aliases) ? aliases : [aliases];
+
+      return {
+        aliases: aliasList,
+        primaryAlias: aliasList[0] || '',
+        name,
+        category: categories[categoryIndex] || 'Uncategorized',
+        popularity,
+        template,
+        searchable: [name, template, categories[categoryIndex] || '', ...aliasList]
+          .join(' ')
+          .toLowerCase()
+      };
+    }
+
+    function scoreBang(bang, query) {
+      if (!query) {
+        return bang.popularity;
+      }
+
+      let score = bang.popularity / 1000;
+
+      if (bang.primaryAlias.toLowerCase() === query) {
+        score += 100000;
+      }
+      if (bang.aliases.some(alias => alias.toLowerCase() === query)) {
+        score += 50000;
+      }
+      if (bang.name.toLowerCase() === query) {
+        score += 25000;
+      }
+      if (bang.name.toLowerCase().includes(query)) {
+        score += 4000;
+      }
+      if (bang.aliases.some(alias => alias.toLowerCase().includes(query))) {
+        score += 3000;
+      }
+      if (bang.category.toLowerCase().includes(query)) {
+        score += 400;
+      }
+
+      return score;
+    }
+
+    function render(items) {
+      results.innerHTML = '';
+
+      if (items.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.textContent = 'No bangs matched that search.';
+        results.append(empty);
+        return;
+      }
+
+      for (const bang of items.slice(0, 12)) {
+        const article = document.createElement('article');
+        article.className = 'result';
+
+        const alias = document.createElement('p');
+        alias.className = 'alias';
+        alias.textContent = `!${bang.primaryAlias}`;
+
+        const name = document.createElement('p');
+        name.className = 'name';
+        name.textContent = bang.name;
+
+        const meta = document.createElement('p');
+        meta.className = 'meta';
+        meta.textContent =
+          `${bang.category} · ${bang.popularity.toLocaleString()} uses · ${bang.aliases.length} alias` +
+          `${bang.aliases.length === 1 ? '' : 'es'}`;
+
+        article.append(alias, name, meta);
+        results.append(article);
+      }
+    }
+
+    function updateResults() {
+      const query = searchInput.value.trim().toLowerCase().replace(/^!/, '');
+      const filtered = query ? allBangs.filter(bang => bang.searchable.includes(query)) : allBangs;
+
+      const sorted = [...filtered].sort((left, right) => {
+        return scoreBang(right, query) - scoreBang(left, query);
+      });
+
+      render(sorted);
+    }
+
+    async function init() {
+      results.innerHTML = '<div class="empty">Loading bangs…</div>';
+
+      const response = await fetch('./bangs.json');
+      if (!response.ok) {
+        throw new Error('Failed to load bangs.json');
+      }
+
+      const data = await response.json();
+      categories = Array.isArray(data.c) ? data.c : [];
+      allBangs = Array.isArray(data.b) ? data.b.map(normalizeBang) : [];
+      updateResults();
+    }
+
+    searchInput.addEventListener('input', updateResults);
+
+    init().catch(() => {
+      results.innerHTML = '<div class="empty">Could not load bangs data.</div>';
+    });
+    </script>
+  </body>
+</html>
