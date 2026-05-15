@@ -1,0 +1,16 @@
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.0
+    hooks:
+      - id: gitleaks
+        stages: [pre-commit]
+
+  - repo: local
+    hooks:
+      - id: trufflehog
+        name: TruffleHog
+        description: Detect secrets in Git changes.
+        entry: bash -c 'trufflehog git file://. --since-commit HEAD --results=verified,unknown --no-update --fail'
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
