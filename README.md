@@ -1,6 +1,8 @@
 # DDG-Kagi Bangs
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+![Github Pages](https://img.shields.io/badge/github%20pages-121013?style=for-the-badge&logo=github&logoColor=white)
+![Update TLDs](https://github.com/verylongdelay/bangs/actions/workflows/update-bangs.yml/badge.svg?)
 
 This is a collection of !bangs from [DuckDuckGo](https://duckduckgo.com) and [Kagi](https://kagi.com), merged together and deduplicated. Inspired by Theo's [unduck](https://github.com/t3-content/unduck).
 
