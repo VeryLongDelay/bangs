@@ -109,6 +109,56 @@
         var(--shadow-soft);
     }
 
+    .search-shell {
+      position: relative;
+    }
+
+    .search-shell input {
+      padding-right: 124px;
+    }
+
+    .shortcut-hint {
+      position: absolute;
+      top: 50%;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transform: translateY(-50%);
+      pointer-events: none;
+      user-select: none;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .keycap {
+      min-width: 1.5rem;
+      padding: 0.1rem 0.4rem;
+      border: 1px solid rgba(148, 163, 184, 0.72);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--primary);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+      font-family: "Lexend", system-ui, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-align: center;
+      transition:
+        background-color 160ms ease,
+        border-color 160ms ease,
+        color 160ms ease,
+        box-shadow 160ms ease;
+    }
+
+    .keycap.is-pressed {
+      border-color: var(--secondary);
+      background: var(--secondary);
+      color: #ffffff;
+      box-shadow: 0 8px 20px rgba(30, 58, 138, 0.18);
+    }
+
     .results {
       margin: 18px 0 0;
       display: grid;
@@ -165,6 +215,19 @@
       input {
         padding: 16px 18px;
       }
+
+      .search-shell input {
+        padding-right: 18px;
+        padding-bottom: 48px;
+      }
+
+      .shortcut-hint {
+        top: auto;
+        right: auto;
+        bottom: 14px;
+        left: 18px;
+        transform: none;
+      }
     }
     </style>
   </head>
@@ -172,21 +235,164 @@
     <main>
       <h1>Bang Search</h1>
       <label class="sr-only" for="bang-search">Search bangs</label>
-      <input
-        id="bang-search"
-        type="search"
-        placeholder="Search !g, Wikipedia, shopping, maps..."
-        autocomplete="off"
-        spellcheck="false"
-      />
+      <div class="search-shell">
+        <input
+          id="bang-search"
+          data-primary-search
+          type="search"
+          placeholder="Search !g, Wikipedia, shopping, maps..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <div class="shortcut-hint" aria-hidden="true">
+          <span>Focus:</span>
+          <kbd class="keycap" data-keycap="slash">/</kbd>
+          <span>or</span>
+          <kbd class="keycap" data-keycap="modifier">⌘</kbd>
+          <kbd class="keycap" data-keycap="k">K</kbd>
+        </div>
+      </div>
       <section class="results" id="results" aria-live="polite"></section>
     </main>
 
     <script>
-    const searchInput = document.querySelector('#bang-search');
+    const searchInput = document.querySelector('[data-primary-search]');
     const results = document.querySelector('#results');
+    const modifierKeycap = document.querySelector("[data-keycap='modifier']");
+    const slashKeycap = document.querySelector("[data-keycap='slash']");
+    const kKeycap = document.querySelector("[data-keycap='k']");
     let allBangs = [];
     let categories = [];
+
+    function isApplePlatform() {
+      return (
+        /Mac|iPhone|iPad|iPod/i.test(navigator.platform) ||
+        (navigator.userAgent.includes('Mac') && 'ontouchend' in document)
+      );
+    }
+
+    const platformModifier = isApplePlatform() ? 'metaKey' : 'ctrlKey';
+    modifierKeycap.textContent = isApplePlatform() ? '⌘' : 'Ctrl';
+
+    function isEditableTarget(target) {
+      if (!(target instanceof HTMLElement)) {
+        return false;
+      }
+
+      return Boolean(
+        target.closest("input, textarea, select, [contenteditable=''], [contenteditable='true']")
+      );
+    }
+
+    function setKeycapPressed(keycap, isPressed) {
+      keycap.classList.toggle('is-pressed', isPressed);
+    }
+
+    function clearPressedKeycaps() {
+      setKeycapPressed(slashKeycap, false);
+      setKeycapPressed(modifierKeycap, false);
+      setKeycapPressed(kKeycap, false);
+    }
+
+    function focusSearch(event, options = {}) {
+      event.preventDefault();
+
+      if (document.activeElement !== searchInput) {
+        searchInput.focus({ preventScroll: true });
+        searchInput.select();
+      }
+
+      window.setTimeout(() => {
+        clearPressedKeycaps();
+      }, options.clearDelay ?? 120);
+    }
+
+    function onShortcutKeyDown(event) {
+      const key = event.key.toLowerCase();
+
+      if (event.key === '/') {
+        setKeycapPressed(slashKeycap, true);
+      }
+
+      if (event.metaKey || event.ctrlKey) {
+        setKeycapPressed(modifierKeycap, true);
+      }
+
+      if (key === 'k') {
+        setKeycapPressed(kKeycap, true);
+      }
+    }
+
+    function onShortcutKeyUp(event) {
+      const key = event.key.toLowerCase();
+
+      if (event.key === '/') {
+        setKeycapPressed(slashKeycap, false);
+      }
+
+      if (event.key === 'Meta' || event.key === 'Control') {
+        setKeycapPressed(modifierKeycap, false);
+        setKeycapPressed(kKeycap, false);
+      }
+
+      if (key === 'k') {
+        setKeycapPressed(kKeycap, false);
+      }
+    }
+
+    function createSearchShortcutHandler(input) {
+      function onKeyDown(event) {
+        const key = event.key.toLowerCase();
+
+        if (document.activeElement === input && key === 'escape') {
+          input.blur();
+          clearPressedKeycaps();
+          return;
+        }
+
+        if (!isEditableTarget(event.target)) {
+          onShortcutKeyDown(event);
+        }
+
+        if (isEditableTarget(event.target)) {
+          return;
+        }
+
+        if (event.key === '/') {
+          focusSearch(event);
+          return;
+        }
+
+        if (key === 'k' && event[platformModifier]) {
+          setKeycapPressed(modifierKeycap, true);
+          setKeycapPressed(kKeycap, true);
+
+          event.preventDefault();
+
+          requestAnimationFrame(() => {
+            focusSearch(event);
+          });
+        }
+      }
+
+      function onKeyUp(event) {
+        onShortcutKeyUp(event);
+      }
+
+      function onBlur() {
+        clearPressedKeycaps();
+      }
+
+      window.addEventListener('keydown', onKeyDown);
+      window.addEventListener('keyup', onKeyUp);
+      window.addEventListener('blur', onBlur);
+
+      return function cleanup() {
+        window.removeEventListener('keydown', onKeyDown);
+        window.removeEventListener('keyup', onKeyUp);
+        window.removeEventListener('blur', onBlur);
+      };
+    }
 
     function normalizeBang([aliases, name, categoryIndex, popularity, template]) {
       const aliasList = Array.isArray(aliases) ? aliases : [aliases];
@@ -293,6 +499,7 @@
     }
 
     searchInput.addEventListener('input', updateResults);
+    createSearchShortcutHandler(searchInput);
 
     init().catch(() => {
       results.innerHTML = '<div class="empty">Could not load bangs data.</div>';
