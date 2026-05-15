@@ -8,61 +8,139 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
     <style>
     :root {
-      color-scheme: light;
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --surface-alt: #eff6ff;
-      --text: #020617;
-      --muted: #475569;
-      --border: #cbd5e1;
-      --border-strong: #94a3b8;
-      --primary: #0f172a;
-      --secondary: #1e3a8a;
-      --accent: #dbeafe;
-      --shadow: 0 18px 60px rgba(15, 23, 42, 0.08);
-      --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.05);
+      color-scheme: dark light;
+      --font-body: "IBM Plex Sans", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --bg: #0f172a;
+      --bg-accent: radial-gradient(
+        ellipse 80% 50% at 50% -20%,
+        rgba(34, 197, 94, 0.12),
+        transparent 70%
+      );
+      --surface: #1e293b;
+      --surface-raised: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-subtle: #64748b;
+      --border: rgba(248, 250, 252, 0.1);
+      --border-strong: rgba(248, 250, 252, 0.16);
+      --accent: #22c55e;
+      --accent-glow: rgba(34, 197, 94, 0.35);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+      --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.35);
+      --shadow-search: 0 0 0 1px var(--border), 0 8px 32px rgba(0, 0, 0, 0.4);
+      --radius: 0.75rem;
+      --radius-sm: 0.5rem;
+      --transition: 200ms ease;
+      --active-keycap: var(--accent);
+      --max-width: 52rem;
     }
 
-    * {
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f8fafc;
+        --bg-accent: radial-gradient(
+          ellipse 80% 50% at 50% -20%,
+          rgba(34, 197, 94, 0.08),
+          transparent 70%
+        );
+        --surface: #ffffff;
+        --surface-raised: #f1f5f9;
+        --text: #0f172a;
+        --text-muted: #475569;
+        --text-subtle: #64748b;
+        --border: #e2e8f0;
+        --border-strong: #cbd5e1;
+        --accent-glow: rgba(34, 197, 94, 0.2);
+        --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+        --shadow-md: 0 4px 24px rgba(15, 23, 42, 0.08);
+        --shadow-search: 0 0 0 1px var(--border), 0 8px 32px rgba(15, 23, 42, 0.06);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms;
+        animation-iteration-count: 1;
+        transition-duration: 0.01ms;
+      }
+    }
+
+    *,
+    *::before,
+    *::after {
       box-sizing: border-box;
     }
 
     body {
       margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      font-family: "Source Sans 3", system-ui, sans-serif;
-      background:
-        radial-gradient(circle at top, rgba(30, 58, 138, 0.08), transparent 36%),
-        linear-gradient(180deg, #f8fafc 0%, #eef4ff 100%);
+      min-height: 100dvh;
+      padding: clamp(1.25rem, 4vw, 2.5rem);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.5;
+      background-color: var(--bg);
+      background-image: var(--bg-accent);
       color: var(--text);
+      -webkit-font-smoothing: antialiased;
     }
 
     main {
-      width: min(100%, 760px);
-      padding: clamp(24px, 5vw, 40px);
-      border: 1px solid rgba(148, 163, 184, 0.32);
-      border-radius: 28px;
-      background: rgba(255, 255, 255, 0.94);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    .hero {
+      margin-bottom: 2rem;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin: 0 0 0.75rem;
+      padding: 0.25rem 0.65rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 10%, transparent);
+    }
+
+    .eyebrow svg {
+      width: 0.85rem;
+      height: 0.85rem;
+      flex-shrink: 0;
     }
 
     h1 {
-      margin: 0 0 20px;
-      font-family: "Lexend", system-ui, sans-serif;
-      font-size: clamp(2rem, 6vw, 4rem);
+      margin: 0 0 0.5rem;
+      font-family: var(--font-mono);
+      font-size: clamp(1.75rem, 5vw, 2.25rem);
       font-weight: 700;
-      line-height: 0.95;
-      letter-spacing: -0.06em;
-      color: var(--primary);
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+    }
+
+    .meta {
+      margin: 0;
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+    }
+
+    .meta.is-loading {
+      color: var(--text-subtle);
     }
 
     .sr-only {
@@ -72,170 +150,205 @@
       padding: 0;
       margin: -1px;
       overflow: hidden;
-      clip: rect(0, 0, 0, 0);
+      clip-path: inset(50%);
       white-space: nowrap;
       border: 0;
     }
 
-    input {
-      width: 100%;
-      padding: 18px 20px;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      font: inherit;
-      font-size: 1.05rem;
-      color: var(--text);
-      background: var(--surface);
-      box-shadow: var(--shadow-soft);
-      transition:
-        border-color 180ms ease,
-        box-shadow 180ms ease,
-        background-color 180ms ease;
-    }
-
-    input::placeholder {
-      color: #64748b;
-    }
-
-    input:hover {
-      border-color: var(--border-strong);
-    }
-
-    input:focus {
-      outline: none;
-      border-color: var(--secondary);
-      box-shadow:
-        0 0 0 4px rgba(30, 58, 138, 0.12),
-        var(--shadow-soft);
-    }
-
     .search-shell {
       position: relative;
+      display: flex;
+      align-items: center;
+      margin-top: 1.75rem;
     }
 
-    .search-shell input {
-      padding-right: 124px;
+    #bang-search {
+      width: 100%;
+      padding: 1rem 11.5rem 1rem 1.125rem;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      font-weight: 500;
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: var(--shadow-search);
+      transition:
+        border-color var(--transition),
+        box-shadow var(--transition);
+    }
+
+    #bang-search::placeholder {
+      color: var(--text-subtle);
+      font-weight: 400;
+    }
+
+    #bang-search:hover {
+      border-color: color-mix(in srgb, var(--accent) 40%, var(--border-strong));
+    }
+
+    #bang-search:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow:
+        var(--shadow-search),
+        0 0 0 3px var(--accent-glow);
+    }
+
+    #bang-search:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
 
     .shortcut-hint {
       position: absolute;
-      top: 50%;
-      right: 16px;
+      right: 0.75rem;
       display: flex;
       align-items: center;
-      gap: 6px;
-      transform: translateY(-50%);
+      gap: 0.35rem;
       pointer-events: none;
       user-select: none;
-      color: var(--muted);
-      font-size: 0.78rem;
-      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 500;
       white-space: nowrap;
     }
 
     .keycap {
-      min-width: 1.5rem;
-      padding: 0.1rem 0.4rem;
-      border: 1px solid rgba(148, 163, 184, 0.72);
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.92);
-      color: var(--primary);
-      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
-      font-family: "Lexend", system-ui, sans-serif;
-      font-size: 0.72rem;
-      font-weight: 600;
+      min-width: 1.45rem;
+      padding: 0.15rem 0.4rem;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
       text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: var(--surface-raised);
+      color: var(--text);
+      box-shadow: var(--shadow-sm);
       transition:
-        background-color 160ms ease,
-        border-color 160ms ease,
-        color 160ms ease,
-        box-shadow 160ms ease;
+        background-color var(--transition),
+        border-color var(--transition),
+        color var(--transition),
+        box-shadow var(--transition);
     }
 
     .keycap.is-pressed {
-      border-color: var(--secondary);
-      background: var(--secondary);
-      color: #ffffff;
-      box-shadow: 0 8px 20px rgba(30, 58, 138, 0.18);
+      background: var(--active-keycap);
+      border-color: var(--active-keycap);
+      color: #fff;
+      box-shadow: 0 0 12px var(--accent-glow);
     }
 
-    .results {
-      margin: 18px 0 0;
+    .stats {
+      margin: 1.25rem 0 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.01em;
+    }
+
+    .grid {
       display: grid;
-      gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+      gap: 0.5rem;
     }
 
     .result {
-      padding: 18px 20px;
-      border: 1px solid rgba(148, 163, 184, 0.26);
-      border-radius: 20px;
-      background: linear-gradient(180deg, var(--surface) 0%, var(--surface-alt) 100%);
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      padding: 0.8rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+      transition:
+        border-color var(--transition),
+        background-color var(--transition),
+        box-shadow var(--transition);
+    }
+
+    .result:hover {
+      border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+      background: color-mix(in srgb, var(--accent) 6%, var(--surface));
+      box-shadow: var(--shadow-md);
     }
 
     .alias {
-      margin: 0 0 4px;
-      font-family: "Lexend", system-ui, sans-serif;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--secondary);
+      margin: 0 0 0.3rem;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent);
     }
 
     .name {
       margin: 0;
-      font-size: 1.15rem;
+      font-size: 0.9375rem;
       font-weight: 600;
-      color: var(--primary);
+      color: var(--text);
     }
 
-    .meta {
-      margin: 6px 0 0;
-      font-size: 0.98rem;
-      color: var(--muted);
+    .result-meta {
+      display: block;
+      margin-top: 0.35rem;
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: var(--text-muted);
     }
 
     .empty {
-      padding: 24px 20px;
-      border: 1px dashed rgba(148, 163, 184, 0.6);
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.68);
-      color: var(--muted);
-      text-align: center;
+      padding: 1rem 1.125rem;
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      background: color-mix(in srgb, var(--surface) 86%, transparent);
     }
 
-    @media (max-width: 640px) {
-      body {
-        padding: 14px;
-      }
-
-      main {
-        padding: 20px;
-        border-radius: 22px;
-      }
-
-      input {
-        padding: 16px 18px;
-      }
-
-      .search-shell input {
-        padding-right: 18px;
-        padding-bottom: 48px;
+    @media (max-width: 520px) {
+      #bang-search {
+        padding-right: 1rem;
+        padding-bottom: 2.6rem;
       }
 
       .shortcut-hint {
-        top: auto;
+        left: 1.125rem;
         right: auto;
-        bottom: 14px;
-        left: 18px;
-        transform: none;
+        bottom: 0.75rem;
       }
     }
     </style>
   </head>
   <body>
     <main>
-      <h1>Bang Search</h1>
-      <label class="sr-only" for="bang-search">Search bangs</label>
+      <header class="hero">
+        <p class="eyebrow">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path d="M4 12h16" />
+            <path d="M12 4v16" />
+          </svg>
+          DuckDuckGo Bangs
+        </p>
+        <h1>Bang Search</h1>
+        <p class="meta is-loading" id="meta">Loading bangs…</p>
+      </header>
+
       <div class="search-shell">
+        <label class="sr-only" for="bang-search">Search bangs</label>
         <input
           id="bang-search"
           data-primary-search
@@ -252,12 +365,17 @@
           <kbd class="keycap" data-keycap="k">K</kbd>
         </div>
       </div>
-      <section class="results" id="results" aria-live="polite"></section>
+
+      <p class="stats" id="stats"></p>
+
+      <section class="grid" id="results" aria-live="polite"></section>
     </main>
 
     <script>
     const searchInput = document.querySelector('[data-primary-search]');
     const results = document.querySelector('#results');
+    const stats = document.querySelector('#stats');
+    const meta = document.querySelector('#meta');
     const modifierKeycap = document.querySelector("[data-keycap='modifier']");
     const slashKeycap = document.querySelector("[data-keycap='slash']");
     const kKeycap = document.querySelector("[data-keycap='k']");
@@ -447,6 +565,7 @@
         empty.className = 'empty';
         empty.textContent = 'No bangs matched that search.';
         results.append(empty);
+        stats.textContent = '0 results';
         return;
       }
 
@@ -462,15 +581,17 @@
         name.className = 'name';
         name.textContent = bang.name;
 
-        const meta = document.createElement('p');
-        meta.className = 'meta';
-        meta.textContent =
+        const resultMeta = document.createElement('span');
+        resultMeta.className = 'result-meta';
+        resultMeta.textContent =
           `${bang.category} · ${bang.popularity.toLocaleString()} uses · ${bang.aliases.length} alias` +
           `${bang.aliases.length === 1 ? '' : 'es'}`;
 
-        article.append(alias, name, meta);
+        article.append(alias, name, resultMeta);
         results.append(article);
       }
+
+      stats.textContent = `${Math.min(items.length, 12)} of ${items.length.toLocaleString()} results`;
     }
 
     function updateResults() {
@@ -486,6 +607,7 @@
 
     async function init() {
       results.innerHTML = '<div class="empty">Loading bangs…</div>';
+      stats.textContent = '';
 
       const response = await fetch('./bangs.json');
       if (!response.ok) {
@@ -495,6 +617,8 @@
       const data = await response.json();
       categories = Array.isArray(data.c) ? data.c : [];
       allBangs = Array.isArray(data.b) ? data.b.map(normalizeBang) : [];
+      meta.textContent = `${allBangs.length.toLocaleString()} searchable bangs`;
+      meta.classList.remove('is-loading');
       updateResults();
     }
 
@@ -502,6 +626,9 @@
     createSearchShortcutHandler(searchInput);
 
     init().catch(() => {
+      meta.textContent = 'Could not load bangs data.';
+      meta.classList.remove('is-loading');
+      stats.textContent = '';
       results.innerHTML = '<div class="empty">Could not load bangs data.</div>';
     });
     </script>
