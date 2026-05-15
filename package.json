@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "build": "node scripts/update-bangs.js",
+    "dev": "node scripts/serve-site.js",
+    "serve": "node scripts/serve-site.js",
     "lint": "biome check .",
     "lint:fix": "biome check --write ."
   },

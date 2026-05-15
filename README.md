@@ -8,6 +8,8 @@ You can use `https://raw.githubusercontent.com/VeryLongDelay/bangs/refs/heads/ma
 
 A Github Action is used to generate the `bangs.json` file and keep it up to date.
 
+To run the static site locally, use `npm run dev` and open `http://127.0.0.1:3000`.
+
 Sources:
 
 - [DuckDuckGo](https://duckduckgo.com/bang.js)
