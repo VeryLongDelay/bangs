@@ -1,10 +1,9 @@
 {
   "name": "bangs",
-  "module": "index.ts",
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "bun run scripts/update-bangs.js",
+    "build": "node scripts/update-bangs.js",
     "lint": "biome check .",
     "lint:fix": "biome check --write ."
   },
